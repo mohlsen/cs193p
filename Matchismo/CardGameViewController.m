@@ -7,6 +7,8 @@
 //
 
 #import "CardGameViewController.h"
+#import "PlayingCardDeck.h"
+#import "PlayingCard.h"
 
 @interface CardGameViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *flipsLabel;
@@ -15,6 +17,13 @@
 @end
 
 @implementation CardGameViewController
+
+//need to init the deck
+- (PlayingCardDeck *)deck
+{
+    if (!_deck) _deck = [[PlayingCardDeck alloc] init];
+    return _deck;
+}
 
 - (void) setFlipCount:(int)flipCount{
     _flipCount = flipCount;
@@ -25,11 +34,33 @@
 - (IBAction)flipCard:(UIButton *)sender {
     
     sender.selected = !sender.isSelected;
-    self.flipCount++;
     
-    //Your homework is to make each flip draw a new card (instead of showing A♣ all the time).
-    //Just add a deck property to your Controller
-    //then draw a random card from it with each flip to fac up.
+    //only update the flipcount and draw a card when fliped to face side of card (selected)
+    if (sender.isSelected) {
+        
+        self.flipCount++;
+        
+        //draw a card (need to cast since drawRandomCard return a Card*
+        PlayingCard *drawnCard = (PlayingCard*)[self.deck drawRandomCard];
+        
+        //if we used all 52, then drawnCard will be nil
+        if (drawnCard) {
+            //now build the text for the card, drawnCard.rank is an int, so look up the rankStrings using the rank (int)
+            NSString* cardTitle = [NSString stringWithFormat:@"%@%@", [PlayingCard rankStrings][drawnCard.rank], drawnCard.suit];
+
+            //finally set the titlemtext for the selected state
+            [sender setTitle:cardTitle
+                    forState:UIControlStateSelected];
+        } else {
+            //all used up!
+            [sender setTitle:@"🚫"
+                    forState:UIControlStateSelected];
+        }
+        
+    }
+
+    
+    
     
 }
 
