@@ -16,6 +16,7 @@
 @property (nonatomic) int flipCount;
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *cardButtons;
 @property (strong, nonatomic) CardMatchingGame *game;
+@property (weak, nonatomic) IBOutlet UILabel *scoreLabel;
 @end
 
 @implementation CardGameViewController
@@ -58,6 +59,9 @@
         cardButton .enabled = !card.isUnplayable;
         cardButton.alpha = card.isUnplayable ? 0.3 : 1.0;
     }
+    
+self.scoreLabel.text = [NSString stringWithFormat:@"Score: %d", self.game.score];
+
 }
 
 - (IBAction)flipCard:(UIButton *)sender {
