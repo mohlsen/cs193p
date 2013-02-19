@@ -25,9 +25,9 @@
 -(id) initWithCardCount:(NSInteger)cardCount
               usingDeck:(Deck *)deck
 {
-    [self =[super init]];
+    self = [super init];
     if (self) {
-        for (int i= 0; i < count; i++) {
+        for (int i= 0; i < cardCount; i++) {
             Card *card = [deck drawRandomCard];
             if (!card) {
                 self = nil;
@@ -58,14 +58,16 @@
         if (!card.isFaceUp) {
             //match made?
             for (Card *otherCard in self.cards) {
-                int matchScore = [card match:@[otherCard]];
-                if (matchScore) {
-                    otherCard.unplayable = YES;
-                    card.unplayable = YES;
-                    self.score += matchScore * MATCH_BONUS;
-                } else {
-                    otherCard.faceUP = NO;
-                    self.score -= MISMATCH_PENALTY;
+                if (otherCard.isFaceUp && !otherCard.isUnplayable) {
+                    int matchScore = [card match:@[otherCard]];
+                    if (matchScore) {
+                        otherCard.unplayable = YES;
+                        card.unplayable = YES;
+                        self.score += matchScore * MATCH_BONUS;
+                    } else {
+                        otherCard.faceUP = NO;
+                        self.score -= MISMATCH_PENALTY;
+                    }
                 }
                 
             }

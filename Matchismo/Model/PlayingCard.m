@@ -19,6 +19,21 @@
 // setter AND getter defined so automatic props wont work
 @synthesize suit = _suit;
 
+-(int)match:(NSArray *) otherCards
+{
+    int score = 0;
+    
+    if (otherCards.count == 1) {
+        PlayingCard *otherCard = [otherCards lastObject];
+        if ([otherCard.suit isEqualToString:self.suit]) {
+            score = 1;
+        } else if (otherCard.rank == self.rank) {
+            score = 4;
+        }
+    }
+    
+    return score;
+}
 
 + (NSArray *)validSuits
 {

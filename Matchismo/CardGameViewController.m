@@ -9,21 +9,22 @@
 #import "CardGameViewController.h"
 #import "PlayingCardDeck.h"
 #import "PlayingCard.h"
+#import "CardMatchingGame.h"
 
 @interface CardGameViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *flipsLabel;
 @property (nonatomic) int flipCount;
-@property (strong, nonatomic) PlayingCardDeck *deck;
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *cardButtons;
+@property (strong, nonatomic) CardMatchingGame *game;
 @end
 
 @implementation CardGameViewController
 
-//need to init the deck
-- (PlayingCardDeck *)deck
-{
-    if (!_deck) _deck = [[PlayingCardDeck alloc] init];
-    return _deck;
+- (CardMatchingGame *)game {
+    
+    if (!_game) _game = [[CardMatchingGame alloc] initWithCardCount:self.cardButtons.count
+                                                          usingDeck:[[PlayingCardDeck alloc] init]];
+    return _game;
 }
 
 - (void) setFlipCount:(int)flipCount{
@@ -32,46 +33,43 @@
     NSLog(@"Flips updated to %d", self.flipCount);
 }
 
+
+
 - (void)setCardButtons:(NSArray *)cardButtons
 {
     _cardButtons = cardButtons;
-    for (UIButton *cardButton in cardButtons) {
+    
+    //old logic before moved it to the model
+    /*for (UIButton *cardButton in cardButtons) {
         Card *card = [self.deck drawRandomCard];
         [cardButton setTitle:card.contents forState:UIControlStateSelected];
+    }*/
+    
+    [self updateUI];
+}
+
+- (void)updateUI
+{
+    for (UIButton *cardButton in self.cardButtons) {
+        Card *card = [self.game cardAtIndex:[self.cardButtons indexOfObject:cardButton]];
+        [cardButton setTitle:card.contents forState:UIControlStateSelected];
+        [cardButton setTitle:card.contents forState:UIControlStateSelected | UIControlStateDisabled];
+        cardButton.selected = card.isFaceUp;
+        cardButton .enabled = !card.isUnplayable;
+        cardButton.alpha = card.isUnplayable ? 0.3 : 1.0;
     }
 }
 
 - (IBAction)flipCard:(UIButton *)sender {
     
-    sender.selected = !sender.isSelected;
+    //sender.selected = !sender.isSelected;
     
-    //only update the flipcount and draw a card when fliped to face side of card (selected)
-    if (sender.isSelected) {
-        
-        self.flipCount++;
-       /*
-        //draw a card (need to cast since drawRandomCard return a Card*
-        PlayingCard *drawnCard = (PlayingCard*)[self.deck drawRandomCard];
-        
-        //if we used all 52, then drawnCard will be nil
-        if (drawnCard) {
-            //now build the text for the card, drawnCard.rank is an int, so look up the rankStrings using the rank (int)
-            NSString* cardTitle = [NSString stringWithFormat:@"%@%@", [PlayingCard rankStrings][drawnCard.rank], drawnCard.suit];
+    [self.game flipCardAtIndex:[self.cardButtons indexOfObject:sender]];
+    
+    self.flipCount++;
+    
+    [self updateUI];
 
-            //finally set the titlemtext for the selected state
-            [sender setTitle:cardTitle
-                    forState:UIControlStateSelected];
-        } else {
-            //all used up!
-            [sender setTitle:@"🚫"
-                    forState:UIControlStateSelected];
-        }*/
-        
-    }
-
-    
-    
-    
 }
 
 
