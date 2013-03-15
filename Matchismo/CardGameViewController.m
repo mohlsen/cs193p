@@ -12,6 +12,7 @@
 #import "CardMatchingGame.h"
 
 @interface CardGameViewController ()
+@property (weak, nonatomic) IBOutlet UILabel *lastFlip;
 @property (weak, nonatomic) IBOutlet UILabel *flipsLabel;
 @property (nonatomic) int flipCount;
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *cardButtons;
@@ -60,8 +61,9 @@
         cardButton.alpha = card.isUnplayable ? 0.3 : 1.0;
     }
     
-self.scoreLabel.text = [NSString stringWithFormat:@"Score: %d", self.game.score];
-
+    self.scoreLabel.text = [NSString stringWithFormat:@"Score: %d", self.game.totalScore];
+    self.lastFlip.text = [NSString stringWithFormat:@"Last Flip: %d", self.game.lastScore];
+    
 }
 
 - (IBAction)flipCard:(UIButton *)sender {

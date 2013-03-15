@@ -18,7 +18,8 @@
 
 - (Card *)cardAtIndex:(NSUInteger)index;
 
-@property (nonatomic, readonly) int score;
+@property (nonatomic, readonly) int totalScore;
+@property (nonatomic, readonly) int lastScore;
 
 @end
 
